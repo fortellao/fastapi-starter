@@ -27,7 +27,11 @@ ENV PATH=/app/.venv/bin:$PATH
 ENV UV_CACHE_DIR=/app/.cache
 RUN uv sync
 
+# Install OpenTelemetry dependency packages and instrumentation
+RUN uv pip install opentelemetry-distro opentelemetry-exporter-otlp
+RUN uv run opentelemetry-bootstrap -a requirements | uv pip install --requirement -
+
 # Expose port (for documentation, not required)
 EXPOSE 8000
 
-CMD ["uvicorn","rest_api.main:app","--port", "8000", "--host", "0.0.0.0", "--app-dir", "src"]
+CMD ["sh", "start.sh"]
